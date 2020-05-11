@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "robo-sphere-whfyeg",
+  "private_key_id": "5df665ddde86afb0286a9922322b1e2bab63a6e7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDmM2m4JVEZYtR9\nBCO0q4ctOiaQhP7krYFyNhncqQQT+fRcPhpF6ca/moE5cuPszq4VgLpHdfuxmpre\nw9ntcjMfF3V9rpxskU8JdItfmO8OkIyFH+JbOD8SrascXhKMtH2uyOJ0xblJzOpC\nWCqHbTKKDa5QqDETyS/Ev/myzs+U5ib5udSVMICcVGmsm6jAKgrt4KeUQ+0CT8x+\nyQDoDu54spvm7boFNlhKUMJsP8mpUvareJUxClyOarZeWM5DcmcjBOSl+CMzhK58\nsnjJIoq5OMtb8nH3EDwYQ6sXEe8BmS4RgS8GZLHwHL2fUIm3GiqkoGUMJmBB4bgR\nqMuN6hZnAgMBAAECggEAXPENEggfAjzgxcjSEbPfU+dSgq7vqqxSwyYMswaaWuZk\nPonkWa3VTK641dUJKScZKh1bGFcOU9q0BJTWfAPLmBYEncXN6heQ7aRcUTCR9DNw\nSJ9i6KmA7a2olD93BdApnlQE+liKQr21Jywpn5v697omUvJVPkPQQYOw8PyG2vp9\nTSjBGpie3S1LCdjAOfdPYNdfK2Tz8M/WHrtBHoamYU9JQiyEykrZZ4K5LMKSm0uH\nLTKZKVIzFQsBmH1py1CicjvGgsvolEyRQv0McwjiHCDX1aSBXOVRiKugV/rfyWO3\noI0sEp+7SWrx9NzTA5r73mcEcBzBaAAMOWBUfm6IIQKBgQD6FwczaTzcjWIMpG/m\nVZY4y8ixOeQTVMgezInENNKPYhuCrm01V7dsOaNKUm+kDhYjhUwXAP+jLxDChv0X\ndXEM3kFXEg0xt46X8o8aS20WslDYz3/ifJy5LOaMjUD5NLHtnW+0C1eZr07tA6tN\nc5ZhGcNCZ8gZ9SbU4JR+T2VWMwKBgQDrpA+4Pj13V7N5VHNVkNsrpQcM42jfsq3i\nuqGw7/83f6T3iaN5bXNuYjeVIXpk3Nodt4N3r9XRQfU60mAkeSbMDq24FYoBiu1T\npq0lclFxCYw6n15UfHALKZ7mO9ftq74GybQXaGFdXC6SHAZfl7TdJl7yMrvWGfEQ\nsGWNsQqC/QKBgAJLHcTJ7UX0gfatt1z8YfFJZSDC8CWBPIiTxZuoBFpOQwRSxyub\nD1KNwMKYuO9fNbLDsSvw1WdQsi2mgUGq0QuWKjE7OCXBkiwwjEFoeaqgnf8u//Q6\nwlEsaTzWusbORedw7ypOhFIjemzQAM0oBzQCwXilbP9X8TA4kwQJhFtjAoGBAIa3\nuTUAgGumfDk1iuq0clk1dB5uNRsPMFKbmK1ryGGWXF4ZFpjpdkD5bgWYqjzX9ute\na48VvAxyxRzoAYdYrFGlYrQHvGq9XomglQT/oogZiU5KpsdujTAUj3/ZXs3GjlGb\nJ5bqWh/h/84Qr6QfO4vj0Axv7Ouu0R9VefnT6cqRAoGAfanZ6BZQGpk2X3f6xM+o\nV5NqEJ8uArecOiXYHpVbXnYIeDNR8U3RND6NxUq/gLo6evHpQunmIKAzzUrzYeTn\nIv2FKGeVO0+mXlw6E2iMZ2FCmc6ZXQBUbQ/5zDVlAUsTNZI4AIQvQSwH5oaJWDyH\nECstX2+v6UU168C+lIVxdPk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "dialogflow-opgwpb@robo-sphere-whfyeg.iam.gserviceaccount.com",
+  "client_id": "115613285642770050483",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dialogflow-opgwpb%40robo-sphere-whfyeg.iam.gserviceaccount.com"
+}

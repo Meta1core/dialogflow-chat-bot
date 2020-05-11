@@ -1,0 +1,20 @@
+{
+  "name": "chatappwithsocket.io",
+  "version": "1.0.0",
+  "description": "My Chat App with Socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Solomon Eseme",
+  "license": "ISC",
+  "dependencies": {
+    "dialogflow": "^0.5.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2"
+  }
+}
