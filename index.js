@@ -3,7 +3,7 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let express = require('express');
 const path = require("path");
-
+const API_PORT = process.env.PORT || 3000
 // Load our custom classes
 const CustomerStore = require('./customerStore.js');
 const MessageRouter = require('./messageRouter.js');
@@ -53,6 +53,6 @@ app.get('/test', (req, res) => {
 });
 app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
-http.listen(3000, () => {
+http.listen(API_PORT, () => {
     console.log('Listening on port *: 3000');
 });
