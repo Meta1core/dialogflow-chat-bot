@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let vmessage = "message";
 const AppConstants = require('./appConstants.js');
 const CustomerStore = require('./customerStore.js');
 const ChatConnectionHandler = require('./chatConnectionHandler.js');
@@ -50,6 +51,7 @@ class OperatorConnectionHandler extends ChatConnectionHandler {
   _gotOperatorInput (message) {
     // Operator messages take the form of an object with customerId and utterance properties
     const { customerId, utterance } = message;
+    vmessage = message;
     console.log('Got operator input: ', message);
     // Look up the customer referenced in the operator's message
     this.router.customerStore

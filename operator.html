@@ -168,7 +168,7 @@ limitations under the License.
             return;
           }
           customer.window
-            .append($('<li class="operator-message">').text(msg.utterance));
+            .append($('<li class="operator-message">').text('(Оператор) - ' + msg.utterance));
         };
 
         // Display messages sent by customers
@@ -179,7 +179,7 @@ limitations under the License.
           }
           // If your implementation has access to the customer's name,
           // you can modify the next line to display it in the prefix.
-          var prefix = msg.isAgentResponse ? 'Agent: ' : 'Customer: ';
+          var prefix = msg.isAgentResponse ? 'Dialogflow: ' : 'Пользователь: ';
           connectedCustomers[msg.customerId]
             .window
             .append($('<li class="customer-message">')

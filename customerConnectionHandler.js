@@ -13,7 +13,6 @@
 
 const AppConstants = require('./appConstants.js');
 const ChatConnectionHandler = require('./chatConnectionHandler.js');
-
 // Handles the connection to an individual customer
 class CustomerConnectionHandler extends ChatConnectionHandler {
   constructor (socket, messageRouter, onDisconnect) {
@@ -62,16 +61,23 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
 
   // Called on receipt of input from the customer
   _gotCustomerInput (utterance) {
+    let custom;
     // Look up this customer
     this.router.customerStore
       .getOrCreateCustomer(this.socket.id)
       .then(customer => {
+        custom = customer;
         // Tell the router to perform any next steps
         return this.router._routeCustomer(utterance, customer, this.socket.id);
       })
       .then(response => {
         // Send any response back to the customer
         if (response) {
+          this.router._sendQueryToAgent(custom, utterance)
+              .then(responses => {
+                const response = responses[0];
+                console.log("ОТВЕТ - ", response);
+              });
           return this._respondToCustomer(response, this.socket);
         }
       })

@@ -9,11 +9,25 @@
   "author": "Solomon Eseme",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^4.7.0",
+    "@google-cloud/text-to-speech": "^2.3.0",
+    "@vue/cli": "^4.3.1",
     "dialogflow": "^0.5.0",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "malihu-custom-scrollbar-plugin": "^3.1.5",
+    "material-icons": "^0.3.1",
+    "recordrtc": "^5.5.9",
+    "socket.io": "^2.3.0",
+    "socket.io-stream": "^0.9.1",
+    "stream": "0.0.2",
+    "through2": "^3.0.1",
+    "util": "^0.12.1",
+    "uuid": "^3.3.3",
+    "web-speech-recognition": "^0.7.2"
   },
   "devDependencies": {
+    "actions-on-google": "^2.12.0",
+    "jquery": "^3.5.1",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2"
   }

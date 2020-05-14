@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Chat</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=0Dlw9Sru"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        h1 { text-align: center; padding: 20px; }
+        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        form input[type = "button"] { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li.customer-error { color: red; }
+        #messages li.customer-message { color: blue; }
+        #messages li.customer-message::before { content: "> " }
+        #messages li:nth-child(odd) { background: #eee; }
+
+        header {
+            background: rosybrown;
+        }
+        header h1{
+            color: white;
+        }
+    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+</head>
+
+<body>
+<header>
+    <h1>Бот лицея номер 1 г.Гродно </h1>
+
+</header>
+<ul id="messages"></ul>
+<form>
+    <input id="m" autocomplete="off" /><button id = "btn">Отправить</button>
+    <input type = "button" id="start-btn" value = "Голосовой ввод">
+    <input type = "button" id="off" onclick="OnOff()" value = "Вкл/выкл озвучку">
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=0Dlw9Sru"></script>
+</body>
+
+<script>
+            var textToSpeech = true;
+            var socket = io('/customer', function () {
+                startRecording.disabled = false;
+            });
+
+            function OnOff(){
+                if(textToSpeech){
+                    textToSpeech = false;
+                    alert("Озвучка сообщений выключена!")
+                } else {
+                    textToSpeech = true;
+                    alert("Озвучка сообщений включена!")
+                }
+            }
+            // When the form is submitted, send a customer message to the server
+            $('form').submit(function(){
+                var messageText = $('#m').val();
+                $('#messages').append($('<li class="customer-message">').text(messageText));
+                socket.emit('customer message', messageText);
+                $('#m').val('');
+                return false;
+            });
+            // When we receive a customer message, display it
+            socket.on('customer message', function(msg) {
+                $('#messages').append($('<li>').text(msg));
+                // if (textToSpeech) {
+                //     let utterance = new SpeechSynthesisUtterance(msg);
+                //     utterance.voice = speechSynthesis.getVoices().filter(function (voice) {
+                //         return utterance.name == "Google UK English Female"
+                //     })[0];
+                // }
+                if(textToSpeech) {
+                    responsiveVoice.speak(msg, "Russian Female");
+                }
+            });
+            socket.on('system error', function(error) {
+                var errorText = error.type + ' - ' + error.message;
+                console.log(errorText);
+                $('#messages').append($('<li class="customer-error">').text(errorText));
+            });
+
+
+            //Speech to text ------------------------------------------------------------------------------
+            var SpeechRecognition = window.webkitSpeechRecognition;
+
+            var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+
+            var Textbox = $('#m');
+            var btn = $('#btn');
+            var instructions = $('instructions');
+
+            var Content = '';
+
+            recognition.continuous = true;
+
+            recognition.onresult = function(event) {
+
+                var current = event.resultIndex;
+
+                var transcript = event.results[current][0].transcript;
+                Content += transcript;
+                Textbox.val(Content);
+                btn.click();
+                Content = "";
+                recognition.stop();
+            };
+
+            recognition.onstart = function() {
+                instructions.text('Voice recognition is ON.');
+            }
+
+            recognition.onerror = function(event) {
+                if(event.error == 'no-speech') {
+                    instructions.text('Try again.');
+                }
+            }
+            $('#start-btn').on('click', function(e) {
+                if (Content.length) {
+                    Content += ' ';
+                }
+                recognition.start();
+            });
+            //end
+</script>
+
+</html>

@@ -119,6 +119,19 @@ class MessageRouter {
       }
     });
   }
+  _sendQueryToAgent (customer, text) {
+    console.log('Sending ' + text.toString() +' to agent');
+    return this.client.detectIntent({
+      // Use the customer ID as Dialogflow's session ID
+      session: this.client.sessionPath(this.projectId, customer.id),
+      queryInput: {
+        text: {
+          text: text.toString(),
+          languageCode: 'ru'
+        }
+      }
+    });
+  }
 
   // Sends an utterance to Dialogflow and returns a promise with API response.
   _sendUtteranceToAgent (utterance, customer) {

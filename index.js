@@ -2,6 +2,8 @@ let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let express = require('express');
+const path = require("path");
+
 // Load our custom classes
 const CustomerStore = require('./customerStore.js');
 const MessageRouter = require('./messageRouter.js');
@@ -44,11 +46,10 @@ app.get('/operator', (req, res) => {
 app.get('/customer', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });
-
-app.get('/agent', (req, res) => {
-    res.sendFile(__dirname + '/dialogflowAgent.vue')
+app.get('/test', (req, res) => {
+    res.sendFile(__dirname + '/test.html')
 });
-app.use('/agent', express.static('agent'))
+app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
 http.listen(3000, () => {
     console.log('Listening on port *: 3000');
