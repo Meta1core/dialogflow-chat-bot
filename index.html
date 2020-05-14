@@ -56,10 +56,10 @@
     <div class="bg"></div>
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=JJKUw1nk"></script>
 </body>
-<script src="/socket.io/socket.io.js"></script>
+
 <script>
     var textToSpeech = false;
-    var socket = io('http://localhost', function () {
+    var socket = io('/customer', function () {
         startRecording.disabled = false;
     });
 

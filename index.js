@@ -3,7 +3,6 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let express = require('express');
 const path = require("path");
-var port = process.env.PORT || 8000
 
 // Load our custom classes
 const CustomerStore = require('./customerStore.js');
@@ -39,7 +38,7 @@ const messageRouter = new MessageRouter({
     operatorRoom: io.of('/operator')
 });
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
 });
 app.get('/operator', (req, res) => {
@@ -54,6 +53,6 @@ app.get('/test', (req, res) => {
 });
 app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
-app.listen(port, () => {
+http.listen(3000, () => {
     console.log('Listening on port *: 3000');
 });
