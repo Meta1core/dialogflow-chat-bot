@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>User Chat</title>
-    <script src="https://dialogflow-lyceum1.herokuapp.com/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="style/style.css" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
@@ -56,10 +56,10 @@
     <div class="bg"></div>
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=JJKUw1nk"></script>
 </body>
-
+<script src="/socket.io/socket.io.js"></script>
 <script>
     var textToSpeech = false;
-    var socket = io('/', function () {
+    var socket = io('http://localhost', function () {
         startRecording.disabled = false;
     });
 
