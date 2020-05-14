@@ -34,7 +34,7 @@ const messageRouter = new MessageRouter({
     customerStore: customerStore,
     dialogflowClient: dialogflowClient,
     projectId: projectId,
-    customerRoom: io.of('/customer'),
+    customerRoom: io.of('/'),
     operatorRoom: io.of('/operator')
 });
 
