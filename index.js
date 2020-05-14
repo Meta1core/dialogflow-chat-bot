@@ -38,7 +38,7 @@ const messageRouter = new MessageRouter({
     operatorRoom: io.of('/operator')
 });
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
 });
 app.get('/operator', (req, res) => {
