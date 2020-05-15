@@ -11,6 +11,7 @@
   "dependencies": {
     "@google-cloud/storage": "^4.7.0",
     "@google-cloud/text-to-speech": "^2.3.0",
+    "@material/icon-button": "^6.0.0",
     "@vue/cli": "^4.3.1",
     "dialogflow": "^0.5.0",
     "express": "^4.17.1",

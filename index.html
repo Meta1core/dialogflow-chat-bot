@@ -49,7 +49,8 @@
 
         </div>
         <div class="message-box">
-            <textarea type="text" class="message-input" placeholder="Введите сообщение..."></textarea>
+            <textarea id = "m" type="text" class="message-input" placeholder="Введите сообщение..."></textarea>
+            <button id="start-btn" class="message-submit "><span id = "mic" class="material-icons">mic</span></button>
         </div>
     </div>
     <div class="bg"></div>
@@ -82,7 +83,7 @@
 
     function updateScrollbar() {
         $("#msssg").animate({ scrollTop: $('#msssg')[0].scrollHeight}, 1000);
-        console.log("СКРОЛЛИМ!!!!!!");
+        console.log("Scroll is activated");
     }
 
 

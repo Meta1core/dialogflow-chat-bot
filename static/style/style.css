@@ -10,6 +10,9 @@ Body
   box-sizing: border-box;
 }
 
+#mic{
+  margin: -5px;
+}
 #chat-circle {
   position: fixed;
   bottom: 50px;
