@@ -44,7 +44,7 @@
             <!--  <figure class="avatar">
                 <img src="http://askavenue.com/img/17.jpg" /></figure>-->
         </div>
-        <div class="messages" id = "msssg" style ="overflow-y: auto;">
+        <div class="messages" id = "msssg" style ="overflow-y: scroll;">
             <div class="messages-content" ></div>
 
         </div>
@@ -81,8 +81,8 @@
     });
 
     function updateScrollbar() {
-        var element = document.getElementById("msssg");
-        element.scrollTop = element.scrollHeight;
+        $("#msssg").animate({ scrollTop: $('#msssg')[0].scrollHeight}, 1000);
+        console.log("СКРОЛЛИМ!!!!!!");
     }
 
 
@@ -103,18 +103,14 @@
             return false;
         }
         $('<div class="message message-personal">' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
-        setInterval(updateScrollbar,1000);
         setDate();
         $('.message-input').val(null);
     }
 
-    $('.message-submit').click(function() {
-        insertMessage();
-    });
-
     $(window).on('keydown', function(e) {
         if (e.which == 13) {
             insertMessage();
+            updateScrollbar();
             return false;
         }
     })
@@ -122,14 +118,14 @@
 
     socket.on('customer message', function(msg) {
         $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
-
         setTimeout(function() {
             $('.message.loading').remove();
             $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure>' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
-            setInterval(updateScrollbar,1000);
+            updateScrollbar();
             setDate();
             i++;
         }, 1000 + (Math.random() * 20) * 100);
+        updateScrollbar();
         setTimeout(function () {
             if(textToSpeech) {
                 responsiveVoice.speak(msg, "Russian Female");
