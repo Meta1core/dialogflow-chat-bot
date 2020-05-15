@@ -23,14 +23,12 @@
 </div>
 <section id = "mainForm" class="avenue-messenger">
     <div class="menu">
-        <div class="items"><span>
-     <a href="#" onclick="closeForm()"  title="Minimize">&mdash;</a><br>
-            <!--
-                 <a href="">enter email</a><br>
-                 <a href="">email transcript</a><br>-->
-     <a href="#" onclick="closeForm()" title="End Chat">&#10005;</a>
-
-     </span></div>
+        <div class="items">
+            <span>
+                <a href="#" onclick="closeForm()"  title="Minimize">&mdash;</a><br>
+                <a href ="#" id = "volume" class="material-icons" onclick="volumeChange()" >volume_up</a>
+            </span>
+        </div>
         <div class="button">...</div>
     </div>
     <div class="agent-face">
@@ -40,7 +38,6 @@
     <div class="chat" >
         <div class="chat-title">
             <h1>Бот лицея номер 1</h1>
-            <h2>Powered by Dialogflow</h2>
             <!--  <figure class="avatar">
                 <img src="http://askavenue.com/img/17.jpg" /></figure>-->
         </div>
@@ -58,18 +55,20 @@
 </body>
 
 <script>
-    var textToSpeech = false;
+    var textToSpeech = true;
     var socket = io('/', function () {
         startRecording.disabled = false;
     });
 
-    function OnOff(){
-        if(textToSpeech){
-            textToSpeech = false;
-            alert("Озвучка сообщений выключена!")
-        } else {
+    function volumeChange() {
+        var iconVolume = document.getElementById("volume");
+        if(iconVolume.textContent == "volume_off"){
+            iconVolume.textContent = "volume_up"
             textToSpeech = true;
-            alert("Озвучка сообщений включена!")
+        }
+        else  {
+            iconVolume.textContent = "volume_off";
+            textToSpeech = false;
         }
     }
 
