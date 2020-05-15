@@ -158,10 +158,10 @@
 
                 if (isFinal) {
                     var transcript = event.results[current][0].transcript;
-
                     if(transcript == lastDebounceTranscript) {
                         return;
                     }
+                    lastDebounceTranscript = transcript;
                     Content += transcript;
                     Textbox.val(Content);
                     insertMessage();
