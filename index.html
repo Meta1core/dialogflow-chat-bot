@@ -157,14 +157,11 @@
                 let isFinal = result.isFinal && (result[0].confidence > 0);
 
                 if (isFinal) {
-                    transcript = result[0].transcript;
+                    var transcript = event.results[current][0].transcript;
 
                     if(transcript == lastDebounceTranscript) {
-                        Content = "";
-                        recognition.stop();
                         return;
                     }
-                    var transcript = event.results[current][0].transcript;
                     Content += transcript;
                     Textbox.val(Content);
                     insertMessage();
