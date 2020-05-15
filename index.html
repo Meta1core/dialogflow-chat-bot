@@ -35,22 +35,21 @@
     </div>
     <div class="agent-face">
         <div class="half">
-            <img class="agent circle" src="http://askavenue.com/img/17.jpg" alt="Jesse Tino"></div>
+            <img class="agent circle" src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" alt="Dialogflow"></div>
     </div>
     <div class="chat" >
         <div class="chat-title">
-            <h1>Jesse Tino</h1>
-            <h2>RE/MAX</h2>
+            <h1>Бот лицея номер 1</h1>
+            <h2>Powered by Dialogflow</h2>
             <!--  <figure class="avatar">
                 <img src="http://askavenue.com/img/17.jpg" /></figure>-->
         </div>
-        <div class="messages" style ="overflow-y: scroll;">
-            <div class="messages-content"></div>
+        <div class="messages" id = "msssg" style ="overflow-y: auto;">
+            <div class="messages-content" ></div>
 
         </div>
         <div class="message-box">
             <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
-            <button type="submit" class="message-submit">Send</button>
         </div>
     </div>
     <div class="bg"></div>
@@ -81,13 +80,11 @@
         $messages.mCustomScrollbar();
     });
 
-
     function updateScrollbar() {
-        $messages.mCustomScrollbar("update").mCustomScrollbar('scrollTo', 'bottom', {
-            scrollInertia: 10,
-            timeout: 0
-        });
+        var element = document.getElementById("msssg");
+        element.scrollTop = element.scrollHeight;
     }
+
 
     function setDate(){
         d = new Date()
@@ -106,9 +103,9 @@
             return false;
         }
         $('<div class="message message-personal">' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
+        setInterval(updateScrollbar,1000);
         setDate();
         $('.message-input').val(null);
-        updateScrollbar();
     }
 
     $('.message-submit').click(function() {
@@ -125,13 +122,12 @@
 
     socket.on('customer message', function(msg) {
         $('<div class="message loading new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure><span></span></div>').appendTo($('.mCSB_container'));
-        updateScrollbar();
 
         setTimeout(function() {
             $('.message.loading').remove();
             $('<div class="message new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure>' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
+            setInterval(updateScrollbar,1000);
             setDate();
-            updateScrollbar();
             i++;
         }, 1000 + (Math.random() * 20) * 100);
         setTimeout(function () {
@@ -139,31 +135,12 @@
                 responsiveVoice.speak(msg, "Russian Female");
             }
         }, 1000 + (Math.random() * 20) * 100);
-        updateScrollbar();
     });
+
     $('.button').click(function(){
         $('.menu .items span').toggleClass('active');
         $('.menu .button').toggleClass('active');
     });
-
-
-
-            // When the form is submitted, send a customer message to the server
-            $('form').submit(function(){
-                var messageText = $('#m').val();
-                $('#messages').append($('<li class="customer-message">').text(messageText));
-                socket.emit('customer message', messageText);
-                $('#m').val('');
-                return false;
-            });
-            // When we receive a customer message, display it
-
-            socket.on('system error', function(error) {
-                var errorText = error.type + ' - ' + error.message;
-                console.log(errorText);
-                $('#messages').append($('<li class="customer-error">').text(errorText));
-            });
-
 
             //Speech to text ------------------------------------------------------------------------------
             var SpeechRecognition = window.webkitSpeechRecognition;
