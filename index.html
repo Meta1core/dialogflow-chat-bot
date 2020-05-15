@@ -141,7 +141,7 @@
 
             //Speech to text ------------------------------------------------------------------------------
             var SpeechRecognition = window.webkitSpeechRecognition;
-
+            var lastDebounceTranscript = "";
             var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
             recognition.maxAlternatives = 1;
             recognition.interimResults = false;
@@ -152,15 +152,25 @@
             recognition.continuous = true;
 
             recognition.onresult = function(event) {
-
                 var current = event.resultIndex;
+                let result = event.results[current];
+                let isFinal = result.isFinal && (result[0].confidence > 0);
 
-                var transcript = event.results[current][0].transcript;
-                Content += transcript;
-                Textbox.val(Content);
-                insertMessage();
-                Content = "";
-                recognition.stop();
+                if (isFinal) {
+                    transcript = result[0].transcript;
+
+                    if(transcript == lastDebounceTranscript) {
+                        Content = "";
+                        recognition.stop();
+                        return;
+                    }
+                    var transcript = event.results[current][0].transcript;
+                    Content += transcript;
+                    Textbox.val(Content);
+                    insertMessage();
+                    Content = "";
+                    recognition.stop();
+                }
             };
 
             recognition.onstart = function() {
