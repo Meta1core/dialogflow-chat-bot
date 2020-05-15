@@ -157,7 +157,9 @@
                 var transcript = event.results[current][0].transcript;
                 Content += transcript;
                 Textbox.val(Content);
-                insertMessage();
+                $('<div class="message message-personal">' + Content + '</div>').appendTo($('.mCSB_container')).addClass('new');
+                setDate();
+                $('.message-input').val(null);
                 Content = "";
                 recognition.stop();
             };
