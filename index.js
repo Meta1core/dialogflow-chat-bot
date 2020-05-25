@@ -4,10 +4,12 @@ let io = require('socket.io')(http);
 let express = require('express');
 const path = require("path");
 const API_PORT = process.env.PORT || 3000
+const bodyParser = require('body-parser')
+
+
 // Load our custom classes
 const CustomerStore = require('./customerStore.js');
 const MessageRouter = require('./messageRouter.js');
-
 // Grab the service account credentials path from an environment variable
 const keyPath = "robo-sphere-whfyeg-5df665ddde86.json";
 if(!keyPath) {
@@ -37,6 +39,9 @@ const messageRouter = new MessageRouter({
     customerRoom: io.of('/'),
     operatorRoom: io.of('/operator')
 });
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json());
+
 
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
@@ -48,9 +53,15 @@ app.get('/operator', (req, res) => {
 app.get('/customer', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });
-app.get('/test', (req, res) => {
-    res.sendFile(__dirname + '/test.html')
-});
+app.post('/messagesFromWebim', function (req, res) {
+    const body = req.body.text;
+    const user_id = req.body.to.id;
+    console.log(user_id, 'ID USERA');
+    res.set('Content-Type', 'text/plain')
+    res.send(`You sent: ${body} to Express`)
+    messageRouter._sendWebimToUser(body, user_id);
+})
+
 app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
 http.listen(API_PORT, () => {

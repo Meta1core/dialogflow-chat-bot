@@ -15,9 +15,16 @@ const AppConstants = require('./appConstants.js');
 const CustomerStore = require('./customerStore.js');
 const CustomerConnectionHandler = require('./customerConnectionHandler.js');
 const OperatorConnectionHandler = require('./operatorConnectionHandler.js');
-
+let vmessage = "message";
+const express = require('express'),
+    app = express(),
+    request = require('request-promise');
+let customerId;
 // Routes messages between connected customers, operators and Dialogflow agent
+
+
 class MessageRouter {
+
   constructor ({ customerStore, dialogflowClient, projectId, customerRoom, operatorRoom }) {
     // Dialogflow client instance
     this.client = dialogflowClient;
@@ -151,6 +158,7 @@ class MessageRouter {
   // Send an utterance, or an array of utterances, to the operator channel so that
   // every operator receives it.
   _sendUtteranceToOperator (utterance, customer, isAgentResponse) {
+    this.sendRequestToWebim(utterance, customer.id);
     console.log('Sending utterance to any operators');
     if (Array.isArray(utterance)) {
       utterance.forEach(message => {
@@ -160,9 +168,73 @@ class MessageRouter {
     } else {
       this.operatorRoom.emit(AppConstants.EVENT_CUSTOMER_MESSAGE,
         this._operatorMessageObject(customer.id, utterance, isAgentResponse));
+
     }
     // We're using Socket.io for our chat, which provides a synchronous API. However, in case
     // you want to swich it out for an async call, this method returns a promise.
+    return Promise.resolve();
+  }
+
+  sendRequestToWebim(utterance, customerId){
+    console.log(customerId)
+    const options = {
+      method: 'POST',
+      uri: 'https://szvotby.webim.ru/l/ch',
+      body: {
+        from: {
+          id: customerId
+        },
+        text: utterance,
+        secret: "fd22b29274f449eb9a7b1bf9524e6b73",
+        channel_id: "9b55eee59b654b4395ea7ee6ff75c7a8"
+      },
+      json: true
+    }
+    request(options)
+        .then(function (response) {
+          // Запрос был успешным, используйте объект ответа как хотите
+        })
+        .catch(function (err) {
+          console.log(err)
+          // Произошло что-то плохое, обработка ошибки
+        })
+  }
+  // Принятия сообщений от операторов Webim.ru и отсылка сообщений каждому пользователю по id
+  _sendWebimToUser (message, user_id) {
+    // this.customerRoom.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, utterance);
+    console.log('Got operator input: ', message);
+    console.log('Got id_user: ', user_id);
+    // Look up the customer referenced in the operator's message
+    this.customerStore
+        .getOrCreateCustomer(user_id)
+        .then(customer => {
+          // Check if we're in agent or human mode
+          // If in agent mode, ignore the input
+          console.log('Got customer: ', JSON.stringify(customer));
+          if (customer.mode === CustomerStore.MODE_AGENT) {
+            return Promise.reject(
+                new CustomerModeError('Cannot respond to customer until they have been escalated.')
+            );
+          }
+          // Otherwise, relay it to all operators
+          return this._relayOperatorMessage(message)
+              // And send it to the appropriate customer
+              .then(() => {
+                const customerConnection = this.customerConnections[user_id];
+                return customerConnection._respondToCustomer(message);
+              });
+        })
+        .catch(error => {
+          console.log('Error handling operator input: ', error);
+          return this._sendErrorToOperator(error);
+        });
+
+
+
+
+
+
+
     return Promise.resolve();
   }
 
@@ -173,7 +245,6 @@ class MessageRouter {
     // you want to swich it out for an async call, this method returns a promise.
     return Promise.resolve();
   }
-
   // Factory method to create message objects in the format expected by the operator client
   _operatorMessageObject (customerId, utterance, isAgentResponse) {
     return {
@@ -205,6 +276,7 @@ class MessageRouter {
   // Place the customer in operator mode by updating the stored customer data,
   // and generate an introductory "human" response to send to the user.
   _switchToOperator (customerId, customer, response) {
+
     console.log('Switching customer to operator mode');
     customer.mode = CustomerStore.MODE_OPERATOR;
     return this.customerStore

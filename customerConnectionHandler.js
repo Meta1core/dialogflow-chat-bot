@@ -13,6 +13,7 @@
 
 const AppConstants = require('./appConstants.js');
 const ChatConnectionHandler = require('./chatConnectionHandler.js');
+
 // Handles the connection to an individual customer
 class CustomerConnectionHandler extends ChatConnectionHandler {
   constructor (socket, messageRouter, onDisconnect) {
@@ -34,6 +35,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
           return this.router._sendEventToAgent(customer)
             .then(responses => {
               const response = responses[0];
+              this._respondToCustomer(response.queryResult.fulfillmentMessages[1], this.socket);
               this._respondToCustomer(response.queryResult.fulfillmentText, this.socket);
             });
         }
@@ -50,6 +52,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
   attachHandlers () {
     this.socket.on(AppConstants.EVENT_CUSTOMER_MESSAGE, (message) => {
       console.log('Received customer message: ', message);
+
       this._gotCustomerInput(message);
     });
     this.socket.on(AppConstants.EVENT_DISCONNECT, () => {
@@ -75,10 +78,12 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         if (response) {
           this.router._sendQueryToAgent(custom, utterance)
               .then(responses => {
-                const response = responses[0];
-                console.log("ОТВЕТ - ", response);
+                if(responses[0].queryResult.fulfillmentMessages[1].carouselSelect != null || responses[0].queryResult.fulfillmentMessages[1].basicCard != null ){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0]);
+                }
+                console.log("ОТВЕТ - ", responses[0]);
               });
-          return this._respondToCustomer(response, this.socket);
+          return this._respondToCustomer(response);
         }
       })
       .catch(error => {
@@ -88,6 +93,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         this._sendErrorToCustomer(error);
       });
   }
+
 
   // Send a message or an array of messages to the customer
   _respondToCustomer (response) {

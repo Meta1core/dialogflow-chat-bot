@@ -1,53 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>User Chat</title>
     <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" href="style/style.css" type="text/css" />
+    <link rel="stylesheet" href="style/style.css" type="text/css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 </head>
-
+<style></style>
 <body>
 <div onclick="openForm()" id="chat-circle" class="btn btn-raised">
     <div id="chat-overlay"></div>
     <i class="material-icons">speaker_phone</i>
 </div>
-<section id = "mainForm" class="avenue-messenger">
+<section id="mainForm" class="avenue-messenger">
     <div class="menu">
         <div class="items">
             <span>
-                <a href="#" onclick="closeForm()"  title="Minimize">&mdash;</a><br>
-                <a href ="#" id = "volume" class="material-icons" onclick="volumeChange()" >volume_up</a>
+                <a href="#" onclick="closeForm()" title="Minimize">&mdash;</a><br>
+                <a href="#" id="volume" class="material-icons" onclick="volumeChange()">volume_up</a>
             </span>
         </div>
         <div class="button">...</div>
     </div>
     <div class="agent-face">
         <div class="half">
-            <img class="agent circle" src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" alt="Dialogflow"></div>
+            <img class="agent circle" src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png"
+                 alt="Dialogflow"></div>
     </div>
-    <div class="chat" >
+    <div class="chat">
         <div class="chat-title">
             <h1>Бот лицея номер 1</h1>
             <!--  <figure class="avatar">
                 <img src="http://askavenue.com/img/17.jpg" /></figure>-->
         </div>
-        <div class="messages" id = "msssg" style ="overflow-y: scroll;">
-            <div class="messages-content" ></div>
-
+        <div class="messages" id="msssg" style="overflow-y: scroll;">
+            <div class="messages-content"></div>
         </div>
         <div class="message-box">
-            <textarea id = "m" type="text" class="message-input" placeholder="Введите сообщение..."></textarea>
-            <button id="start-btn" class="message-submit "><span id = "mic" class="material-icons">mic</span></button>
+            <textarea id="m" type="text" class="message-input" placeholder="Введите сообщение..."></textarea>
+            <button id="start-btn" class="message-submit "><span id="mic" class="material-icons">mic</span></button>
         </div>
     </div>
     <div class="bg"></div>
@@ -55,38 +65,69 @@
 </body>
 
 <script>
-    var textToSpeech = true;
+    var textToSpeech = false;
     var socket = io('/', function () {
         startRecording.disabled = false;
+    });
+    var $messages = $('.messages-content'),
+        d, h, m,
+        i = 0;
+
+
+
+    socket.on('customer message', function (msg) {
+        if (msg.message === "suggestions") {
+            typeSuggestions(msg);
+        } else {
+            if (msg.queryResult !== undefined) {
+                if (msg.queryResult.fulfillmentMessages[1].carouselSelect === undefined) {
+                    typeCardAndPicture(msg);
+                }
+                if (msg.queryResult.fulfillmentMessages[1].carouselSelect !== undefined) {
+                    typeCarousel(msg);
+                }
+            }
+            else {
+                typeTextMessage(msg);
+            }
+        }
+    });
+
+    $(window).on('load', (function () {
+        volumeChange();
+        $messages.mCustomScrollbar();
+    }));
+
+    $(window).on('keydown', function (e) {
+        if (e.which == 13) {
+            insertMessage();
+            updateScrollbar();
+            return false;
+        }
+    })
+
+    $('.button').click(function () {
+        $('.menu .items span').toggleClass('active');
+        $('.menu .button').toggleClass('active');
     });
 
     function volumeChange() {
         var iconVolume = document.getElementById("volume");
-        if(iconVolume.textContent == "volume_off"){
+        if (iconVolume.textContent == "volume_off") {
             iconVolume.textContent = "volume_up"
             textToSpeech = true;
-        }
-        else  {
+        } else {
             iconVolume.textContent = "volume_off";
             textToSpeech = false;
         }
     }
 
-    var $messages = $('.messages-content'),
-        d, h, m,
-        i = 0;
-
-    $(window).load(function() {
-        $messages.mCustomScrollbar();
-    });
-
     function updateScrollbar() {
-        $("#msssg").animate({ scrollTop: $('#msssg')[0].scrollHeight}, 1000);
+        $("#msssg").animate({scrollTop: $('#msssg')[0].scrollHeight}, 1000);
         console.log("Scroll is activated");
     }
 
-
-    function setDate(){
+    function setDate() {
         d = new Date()
         if (m != d.getMinutes()) {
             m = d.getMinutes();
@@ -107,18 +148,36 @@
         $('.message-input').val(null);
     }
 
-    $(window).on('keydown', function(e) {
-        if (e.which == 13) {
-            insertMessage();
-            updateScrollbar();
-            return false;
-        }
-    })
-
-
-    socket.on('customer message', function(msg) {
+    //Типы сообщений(Карточка, Карусель, Картинка, Простое сообщение) -------------------------------------------------------------------------------------------------------------------
+    function typeSuggestions(msg) {
         $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
-        setTimeout(function() {
+        setTimeout(function () {
+            $('.message.loading').remove();
+            $('<figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><button id = "sgbt1" onclick="autoInsert(this.textContent)" type="button" class="btn btn-light">' + msg.suggestions.suggestions[0].title + '</button><button  id = "sgbt2" onclick="autoInsert(this.textContent)"  type="button"  class="btn btn-light">' + msg.suggestions.suggestions[1].title + '</button><button id = "sgbt3"  onclick="autoInsert(this.textContent)"  type="button" class="btn btn-light">' + msg.suggestions.suggestions[2].title + '</button>').appendTo($('.mCSB_container'));
+            updateScrollbar();
+            setDate();
+            i++;
+        }, 1000 + (Math.random() * 20) * 100);
+        updateScrollbar();
+    }
+
+    function typeCardAndPicture(msg) {
+        $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+        setTimeout(function () {
+            $('.message.loading').remove();
+            if (msg.queryResult.fulfillmentMessages[1].basicCard.formattedText !== "") {
+                $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><img width="130px" onclick="autoInsert(text)" height="100px" src="' + msg.queryResult.fulfillmentMessages[1].basicCard.image.imageUri.toString() + '"> ' + ' <h6><strong>' + msg.queryResult.fulfillmentMessages[1].basicCard.image.accessibilityText.toString() + '</strong></h6><p style="font-family: Arial; font-size: 12px"> ' + msg.queryResult.fulfillmentMessages[1].basicCard.formattedText.toString() + '</p> </div>').appendTo($('.mCSB_container')).addClass('new');
+            } else $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><img width="130px" onclick="autoInsert(text)" height="100px" src="' + msg.queryResult.fulfillmentMessages[1].basicCard.image.imageUri.toString() + '"></div>').appendTo($('.mCSB_container')).addClass('new');
+            updateScrollbar();
+            setDate();
+            i++;
+        }, 1000 + (Math.random() * 20) * 100);
+        updateScrollbar();
+    }
+
+    function typeTextMessage(msg){
+        $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+        setTimeout(function () {
             $('.message.loading').remove();
             $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure>' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
             updateScrollbar();
@@ -127,69 +186,121 @@
         }, 1000 + (Math.random() * 20) * 100);
         updateScrollbar();
         setTimeout(function () {
-            if(textToSpeech) {
+            if (textToSpeech) {
                 responsiveVoice.speak(msg, "Russian Female");
             }
         }, 1000 + (Math.random() * 20) * 100);
-    });
+    }
 
-    $('.button').click(function(){
-        $('.menu .items span').toggleClass('active');
-        $('.menu .button').toggleClass('active');
-    });
+    function typeCarousel(msg) {
+        text1 = msg.queryResult.fulfillmentMessages[1].carouselSelect.items[0].title;
+        text2 = msg.queryResult.fulfillmentMessages[1].carouselSelect.items[1].title
+        text3 = msg.queryResult.fulfillmentMessages[1].carouselSelect.items[2].title
+        var currentSlide = 0;
+        var currentElem = 0;
+        $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+        setTimeout(function () {
+            $('.message.loading').remove();
+            $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure>' +
+                '<h2 id = "title"></h2>' +
+                ' <ul id="slides">' +
+                ' <li class="slide showing" style ="background-image: url(' + msg.queryResult.fulfillmentMessages[1].carouselSelect.items[0].image.imageUri.toString() + '); background-size: cover"></li>' +
+                ' <li class="slide" style ="background-image: url(' + msg.queryResult.fulfillmentMessages[1].carouselSelect.items[1].image.imageUri.toString() + '); background-size: cover"></li>' +
+                ' <li class="slide" style ="background-image: url(' + msg.queryResult.fulfillmentMessages[1].carouselSelect.items[2].image.imageUri.toString() + '); background-size: cover"></li>' +
+                '</ul>' +
+                '<button  id = "previous"  type="button"  class="btn btn-light">Назад</button>' + '<button  id = "next" type="button"  class="btn btn-light">Вперед</button>' +
+                '</div>').appendTo($('.mCSB_container')).addClass('new');
+            var slides = document.querySelectorAll('#slides .slide');
 
-            //Speech to text ------------------------------------------------------------------------------
-            var SpeechRecognition = window.webkitSpeechRecognition;
-            var lastDebounceTranscript = "";
-            var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
-            recognition.maxAlternatives = 1;
-            recognition.interimResults = false;
-            var Textbox = $('#m');
-            var instructions = $('instructions');
-            var Content = '';
+            function nextSlide() {
+                goToSlide(currentSlide + 1);
 
-            recognition.continuous = true;
+            }
 
-            recognition.onresult = function(event) {
-                var current = event.resultIndex;
-                let result = event.results[current];
-                let isFinal = result.isFinal && (result[0].confidence > 0);
+            function previousSlide() {
+                goToSlide(currentSlide - 1);
+            }
 
-                if (isFinal) {
-                    var transcript = event.results[current][0].transcript;
-                    if(transcript == lastDebounceTranscript) {
-                        return;
-                    }
-                    lastDebounceTranscript = transcript;
-                    Content += transcript;
-                    Textbox.val(Content);
-                    insertMessage();
-                    Content = "";
-                    recognition.stop();
-                }
+            function goToSlide(n) {
+                slides[currentSlide].className = 'slide';
+                currentSlide = (n + slides.length) % slides.length;
+                slides[currentSlide].className = 'slide showing';
+            }
+
+            var next = document.getElementById('next');
+            var previous = document.getElementById('previous');
+
+            next.onclick = function () {
+                nextSlide();
             };
+            previous.onclick = function () {
+                previousSlide();
+            };
+            updateScrollbar();
+            setDate();
+            i++;
+        }, 1000 + (Math.random() * 20) * 100);
+        updateScrollbar();
+    }
 
-            recognition.onstart = function() {
-                instructions.text('Voice recognition is ON.');
+    //Голосовой ввод и добавление сообщений для кнопок(AutoInsert) -------------------------------------------------------------------------------------------------------------------
+    var SpeechRecognition = window.webkitSpeechRecognition;
+    var lastDebounceTranscript = "";
+    var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+    recognition.maxAlternatives = 1;
+    recognition.interimResults = false;
+    var Textbox = $('#m');
+    var instructions = $('instructions');
+    var Content = '';
+
+    function autoInsert(text) {
+        Textbox.val(text);
+        insertMessage();
+        updateScrollbar();
+
+    }
+
+    recognition.continuous = true;
+
+    recognition.onresult = function (event) {
+        var current = event.resultIndex;
+        let result = event.results[current];
+        let isFinal = result.isFinal && (result[0].confidence > 0);
+
+        if (isFinal) {
+            var transcript = event.results[current][0].transcript;
+            if (transcript == lastDebounceTranscript) {
+                return;
             }
+            lastDebounceTranscript = transcript;
+            Content += transcript;
+            Textbox.val(Content);
+            insertMessage();
+            Content = "";
+            recognition.stop();
+        }
+    };
 
-            recognition.onerror = function(event) {
-                if(event.error == 'no-speech') {
-                    instructions.text('Try again.');
-                }
-            }
-            $('#start-btn').on('click', function(e) {
-                if (Content.length) {
-                    Content += ' ';
-                }
-                recognition.start();
-            });
-            //end
+    recognition.onstart = function () {
+        instructions.text('Voice recognition is ON.');
+    }
 
+    recognition.onerror = function (event) {
+        if (event.error == 'no-speech') {
+            instructions.text('Try again.');
+        }
+    }
+    $('#start-btn').on('click', function (e) {
+        if (Content.length) {
+            Content += ' ';
+        }
+        recognition.start();
+    });
+
+    //Методы для кнопки-виджета, спрятать/раскрыть бота
     function openForm() {
         document.getElementById("mainForm").style.display = "block";
     }
-
     function closeForm() {
         document.getElementById("mainForm").style.display = "none";
     }
