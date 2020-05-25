@@ -236,6 +236,10 @@ Messages
   border: 1px solid #ccc;
   /*text-shadow: 0 1px 1px rgba(0, 0, 0, .2);*/
 }
+.suggestions .message{
+  background: white;
+  border: none;
+}
 .messages .message .timestamp {
   position: absolute;
   bottom: -15px;
