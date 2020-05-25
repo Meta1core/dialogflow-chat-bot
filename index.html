@@ -76,10 +76,14 @@
 
 
     socket.on('customer message', function (msg) {
-        if (msg.message === "suggestions") {
-            typeSuggestions(msg);
-        } else {
-            if (msg.queryResult !== undefined) {
+            if (msg.queryResult === undefined) {
+                typeTextMessage(msg);
+            }
+            else {
+                if (msg.queryResult.fulfillmentMessages[1].message === "suggestions" ) {
+                    console.log("ДОШЛО")
+                    typeSuggestions(msg);
+                }
                 if (msg.queryResult.fulfillmentMessages[1].carouselSelect === undefined) {
                     typeCardAndPicture(msg);
                 }
@@ -87,10 +91,21 @@
                     typeCarousel(msg);
                 }
             }
-            else {
-                typeTextMessage(msg);
-            }
-        }
+        // if (msg === "suggestions") {
+        //     typeSuggestions(msg);
+        // } else {
+        //     if (msg.queryResult !== undefined) {
+        //         if (msg.queryResult.fulfillmentMessages[1].carouselSelect === undefined) {
+        //             typeCardAndPicture(msg);
+        //         }
+        //         if (msg.queryResult.fulfillmentMessages[1].carouselSelect !== undefined) {
+        //             typeCarousel(msg);
+        //         }
+        //     }
+        //     else {
+        //         typeTextMessage(msg);
+        //     }
+        // }
     });
 
     $(window).on('load', (function () {
@@ -153,7 +168,7 @@
         $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
         setTimeout(function () {
             $('.message.loading').remove();
-            $('<figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><button id = "sgbt1" onclick="autoInsert(this.textContent)" type="button" class="btn btn-light">' + msg.suggestions.suggestions[0].title + '</button><button  id = "sgbt2" onclick="autoInsert(this.textContent)"  type="button"  class="btn btn-light">' + msg.suggestions.suggestions[1].title + '</button><button id = "sgbt3"  onclick="autoInsert(this.textContent)"  type="button" class="btn btn-light">' + msg.suggestions.suggestions[2].title + '</button>').appendTo($('.mCSB_container'));
+            $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><button id = "sgbt1" onclick="autoInsert(this.textContent)" type="button" class="btn btn-light">' + msg.queryResult.fulfillmentMessages[1].suggestions.suggestions[0].title + '</button><button  id = "sgbt2" onclick="autoInsert(this.textContent)"  type="button"  class="btn btn-light">' + msg.queryResult.fulfillmentMessages[1].suggestions.suggestions[1].title + '</button><button id = "sgbt3"  onclick="autoInsert(this.textContent)"  type="button" class="btn btn-light">' + msg.queryResult.fulfillmentMessages[1].suggestions.suggestions[2].title + '</button></div>').appendTo($('.mCSB_container')).addClass('new');
             updateScrollbar();
             setDate();
             i++;

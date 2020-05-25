@@ -35,8 +35,8 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
           return this.router._sendEventToAgent(customer)
             .then(responses => {
               const response = responses[0];
-              this._respondToCustomer(response.queryResult.fulfillmentMessages[1], this.socket);
               this._respondToCustomer(response.queryResult.fulfillmentText, this.socket);
+              this._respondToCustomer(response, this.socket);
             });
         }
         // If known, do nothing - they just reconnected after a network interruption
@@ -78,7 +78,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         if (response) {
           this.router._sendQueryToAgent(custom, utterance)
               .then(responses => {
-                if(responses[0].queryResult.fulfillmentMessages[1].carouselSelect != null || responses[0].queryResult.fulfillmentMessages[1].basicCard != null ){
+                if(responses[0].queryResult.fulfillmentMessages[1].carouselSelect != null || responses[0].queryResult.fulfillmentMessages[1].basicCard != null || responses[0].queryResult.fulfillmentMessages[1].message === "suggestions" ){
                   this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0]);
                 }
                 console.log("ОТВЕТ - ", responses[0]);
