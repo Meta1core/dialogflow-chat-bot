@@ -34,9 +34,9 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         if (customer.isNew) {
           return this.router._sendEventToAgent(customer)
             .then(responses => {
-              const response = responses[0];
-              this._respondToCustomer(response.queryResult.fulfillmentText, this.socket);
-              this._respondToCustomer(response, this.socket);
+                  const response = responses[0];
+                  this._respondToCustomer(response.queryResult.fulfillmentText, this.socket);
+                  this._respondToCustomer(response, this.socket)
             });
         }
         // If known, do nothing - they just reconnected after a network interruption
@@ -48,7 +48,6 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         this._sendErrorToCustomer(error);
       });
   }
-
   attachHandlers () {
     this.socket.on(AppConstants.EVENT_CUSTOMER_MESSAGE, (message) => {
       console.log('Received customer message: ', message);
