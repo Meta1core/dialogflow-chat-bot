@@ -63,6 +63,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
 
   // Called on receipt of input from the customer
   _gotCustomerInput (utterance) {
+    let array;
     let custom;
     // Look up this customer
     this.router.customerStore
@@ -77,12 +78,30 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
         if (response) {
           this.router._sendQueryToAgent(custom, utterance)
               .then(responses => {
-                if(responses[0].queryResult.fulfillmentMessages[1].carouselSelect != null || responses[0].queryResult.fulfillmentMessages[1].basicCard != null || responses[0].queryResult.fulfillmentMessages[1].message === "suggestions" ){
+                if(responses[0].queryResult.fulfillmentMessages[0].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[0].text.text[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[1].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[1].text.text[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[2].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[2].text.text[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[1].carouselSelect != null || responses[0].queryResult.fulfillmentMessages[1].basicCard != null || responses[0].queryResult.fulfillmentMessages[1].linkOutSuggestion != null|| responses[0].queryResult.fulfillmentMessages[1].message === "suggestions"  ){
                   this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[3].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[3].text.text[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[4].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[4].text.text[0]);
+                }
+                if(responses[0].queryResult.fulfillmentMessages[5].message === "text"){
+                  this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[5].text.text[0]);
                 }
                 console.log("ОТВЕТ - ", responses[0]);
               });
-          return this._respondToCustomer(response);
+          //return this._respondToCustomer(response);
         }
       })
       .catch(error => {

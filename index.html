@@ -81,8 +81,11 @@
             }
             else {
                 if (msg.queryResult.fulfillmentMessages[1].message === "suggestions" ) {
-                    console.log("ДОШЛО")
                     typeSuggestions(msg);
+                }
+                if (msg.queryResult.fulfillmentMessages[1].linkOutSuggestion !== undefined) {
+                    console.log("AI")
+                    typeLinkOutButton(msg);
                 }
                 if (msg.queryResult.fulfillmentMessages[1].carouselSelect === undefined) {
                     typeCardAndPicture(msg);
@@ -163,7 +166,19 @@
         $('.message-input').val(null);
     }
 
-    //Типы сообщений(Карточка, Карусель, Картинка, Простое сообщение) -------------------------------------------------------------------------------------------------------------------
+    //Типы сообщений(Карточка, Карусель, Картинка, Простое сообщение, Кнопка с ссылкой) -------------------------------------------------------------------------------------------------------------------
+    function typeLinkOutButton(msg) {
+        $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+        setTimeout(function () {
+            $('.message.loading').remove();
+            $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><button id = "linkOutButton1"  onclick="openLinkOut(this.value)" value = "'+msg.queryResult.fulfillmentMessages[1].linkOutSuggestion.uri+'" type="button" class="btn btn-light">' + msg.queryResult.fulfillmentMessages[1].linkOutSuggestion.destinationName.toString()+ '</button></div>').appendTo($('.mCSB_container')).addClass('new');
+            updateScrollbar();
+            setDate();
+            i++;
+        }, 1000 + (Math.random() * 20) * 100);
+        updateScrollbar();
+    }
+
     function typeSuggestions(msg) {
         $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
         setTimeout(function () {
@@ -191,10 +206,13 @@
     }
 
     function typeTextMessage(msg){
+        var re = /(https?|ftp):\/\/\S+[^\s.,> )\];'\"!?]/;
+        var subst = '<a href="$&" target="_blank">$&</a>';
+        var withlink = msg.replace(re, subst);
         $('<div class="message loading new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
         setTimeout(function () {
             $('.message.loading').remove();
-            $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure>' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
+            $('<div class="message new"><figure class="avatar"><img src="https://cui.tools/wp-content/uploads/2019/02/dialogflow01.png" /></figure>' + withlinkp + '</div>').appendTo($('.mCSB_container')).addClass('new');
             updateScrollbar();
             setDate();
             i++;
@@ -273,6 +291,10 @@
         insertMessage();
         updateScrollbar();
 
+    }
+    function openLinkOut(msg) {
+        document.location.href = msg.toString();
+       console.log(msg);
     }
 
     recognition.continuous = true;
