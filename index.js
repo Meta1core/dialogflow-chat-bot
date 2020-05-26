@@ -1,7 +1,10 @@
-let app = require('express')();
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
+var http = require('http');
 let express = require('express');
+var app = express();
+var server = http.createServer(app);
+
+var io = require('socket.io').listen(server);
+
 const path = require("path");
 const API_PORT = process.env.PORT || 3000
 const bodyParser = require('body-parser')
@@ -64,6 +67,6 @@ app.post('/messagesFromWebim', function (req, res) {
 
 app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
-http.listen(API_PORT, () => {
+server.listen(API_PORT, () => {
     console.log('Listening on port *: 3000');
 });
