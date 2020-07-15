@@ -59,9 +59,18 @@ app.post('/messagesFromWebim', function (req, res) {
     console.log(user_id, 'ID USERA');
     res.set('Content-Type', 'text/plain')
     res.send(`You sent: ${body} to Express`)
-    messageRouter._sendWebimToUser(body, user_id);
+    messageRouter._sendMessageFromApiToUser(body, user_id);
 })
-
+app.post('/messagesFromJivoSite', function (req, res) {
+    const body = req.body.message.text;
+    const user_id  = req.body.recipient.id;
+    // const user_id = req.body.recipient.id;
+    // console.log(user_id, 'ID USERA');
+    // console.log(user_id, 'TEXT');
+    res.set('Content-Type', 'text/plain')
+    res.send(`You sent: ${body} to Express`)
+    messageRouter._sendMessageFromApiToUser(body, user_id);
+})
 app.use(express.static(path.join(__dirname, "static")));
 messageRouter.handleConnections();
 http.listen(API_PORT, () => {

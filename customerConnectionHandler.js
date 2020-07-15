@@ -99,7 +99,6 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
                 if(responses[0].queryResult.fulfillmentMessages[5].message === "text"){
                   this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, responses[0].queryResult.fulfillmentMessages[5].text.text[0]);
                 }
-                console.log("ОТВЕТ - ", responses[0]);
               });
           //return this._respondToCustomer(response);
         }
@@ -115,7 +114,7 @@ class CustomerConnectionHandler extends ChatConnectionHandler {
 
   // Send a message or an array of messages to the customer
   _respondToCustomer (response) {
-    console.log('Sending response to customer:', response);
+    console.log('Sending response to customer:', response.fulfillmentText);
     if (Array.isArray(response)) {
       response.forEach(message => {
         this.socket.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, message);

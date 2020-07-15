@@ -99,7 +99,7 @@ class MessageRouter {
           // If the agent indicated that the customer should be switched to operator
           // mode, do so
           if (this._checkOperatorMode(response)) {
-            return this._switchToOperator(customerId, customer, response);
+            return this._switchToOperator(utterance, customerId, customer, response);
           }
           // If not in operator mode, just grab the agent's response
           const speech = response.queryResult.fulfillmentText;
@@ -158,7 +158,10 @@ class MessageRouter {
   // Send an utterance, or an array of utterances, to the operator channel so that
   // every operator receives it.
   _sendUtteranceToOperator (utterance, customer, isAgentResponse) {
-    this.sendRequestToWebim(utterance, customer.id);
+    if(customer.mode === CustomerStore.MODE_OPERATOR) {
+      this.sendRequestToWebim(utterance, customer.id);
+      this.sendRequestToJivoSite(utterance, customer.id);
+    }
     console.log('Sending utterance to any operators');
     if (Array.isArray(utterance)) {
       utterance.forEach(message => {
@@ -175,18 +178,47 @@ class MessageRouter {
     return Promise.resolve();
   }
 
-  sendRequestToWebim(utterance, customerId){
+  sendRequestToJivoSite(utterance, customerId, isAgentResponse){
+    const options = {
+      method: 'POST',
+      uri: 'https://wh.jivosite.com/IF6YK0nYgC56npYB/fz70nh1iSb',
+      body: {
+      sender :
+      {
+        id   : customerId
+      },
+      message :
+      {
+        type : "text",
+          id   : "customer_message_id",
+          text : utterance
+      }
+      },
+      json: true
+    }
+    request(options)
+        .then(function (response) {
+          console.log(response);
+          // Запрос был успешным, используйте объект ответа как хотите
+        })
+        .catch(function (err) {
+          console.log(err)
+          // Произошло что-то плохое, обработка ошибки
+        })
+  }
+
+  sendRequestToWebim(utterance, customerId, isAgentResponse){
     console.log(customerId)
     const options = {
       method: 'POST',
-      uri: 'https://szvotby.webim.ru/l/ch',
+      uri: 'https://4912104153.webim.ru/l/ch',
       body: {
         from: {
           id: customerId
         },
         text: utterance,
-        secret: "fd22b29274f449eb9a7b1bf9524e6b73",
-        channel_id: "9b55eee59b654b4395ea7ee6ff75c7a8"
+        secret: "0d9d4987667545f985db2128c931b3da",
+        channel_id: "09d692de886348dc92f851007e938f83"
       },
       json: true
     }
@@ -200,7 +232,7 @@ class MessageRouter {
         })
   }
   // Принятия сообщений от операторов Webim.ru и отсылка сообщений каждому пользователю по id
-  _sendWebimToUser (message, user_id) {
+  _sendMessageFromApiToUser (message, user_id) {
     // this.customerRoom.emit(AppConstants.EVENT_CUSTOMER_MESSAGE, utterance);
     console.log('Got operator input: ', message);
     console.log('Got id_user: ', user_id);
@@ -275,10 +307,11 @@ class MessageRouter {
 
   // Place the customer in operator mode by updating the stored customer data,
   // and generate an introductory "human" response to send to the user.
-  _switchToOperator (customerId, customer, response) {
-
+  _switchToOperator (utterance, customerId, customer, response) {
     console.log('Switching customer to operator mode');
     customer.mode = CustomerStore.MODE_OPERATOR;
+    console.log(utterance + "UTTERANCE");
+    console.log(customerId+ "CUSTOMER ID");
     return this.customerStore
       .setCustomer(customerId, customer)
       .then(this._notifyOperatorOfSwitch(customerId, customer))
